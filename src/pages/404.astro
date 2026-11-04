@@ -1,0 +1,19 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  description="Find your way back to Media Tools product pages, guides and documentation."
+  title="Page not found — Media Tools"
+>
+  <div class="wrap prose">
+    <div class="eyebrow">404</div>
+    <h1>This path ends here.</h1>
+    <p>
+      The page may have moved. Your library is still right where you left it.
+    </p>
+    <a class="button primary" href={import.meta.env.BASE_URL}>
+      Back to Media Tools →
+    </a>
+  </div>
+</Layout>

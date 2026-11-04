@@ -1,0 +1,45 @@
+---
+import { libraryTest } from "../data/library-test";
+const files = libraryTest.files.toLocaleString("en-US");
+const machines = libraryTest.machines.filter((m) => m.hardware && m.time);
+---
+
+<section class="wrap section">
+  <div class="eyebrow">TESTED ON A REAL LIBRARY</div>
+  <h2>{files} videos.</h2>
+  <p>
+    I tested Media Trickplay Generator on my own library of {files} video files.
+    Results depend on your hardware, storage and videos.
+  </p>
+  {machines.length > 0 && (
+    <>
+      <div
+        class="table-scroll"
+        role="region"
+        aria-label="Library test timings"
+        tabindex="0"
+      >
+        <table class="stack-table">
+          <caption>Generating trickplay for the same library</caption>
+          <thead>
+            <tr>
+              <th scope="col">Machine</th>
+              <th scope="col">Hardware</th>
+              <th scope="col">Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {machines.map((m) => (
+              <tr>
+                <th scope="row">{m.label}</th>
+                <td data-label="Hardware">{m.hardware}</td>
+                <td data-label="Time">{m.time}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p>Both machines read the same library from the server’s storage.</p>
+    </>
+  )}
+</section>

@@ -1,0 +1,46 @@
+---
+import { github } from "../data/tools";
+import { renderUpstream } from "../lib/upstream.mjs";
+const { tool: t } = Astro.props;
+// The reference is the project's own technical.md, copied at a pinned
+// revision (vendor/upstream) and rendered at build time.
+const doc = renderUpstream(t.repo);
+---
+
+<article class="wrap prose product-document reference">
+  <nav
+    class="doc-toc"
+    aria-label="Technical contents"
+    data-technical-toc
+    hidden
+  >
+    <strong>In this reference</strong>
+  </nav>
+  <p class="reference-source">
+    This is the project’s own technical reference, shown as of revision{" "}
+    <a
+      href={`${github}${t.repo}/blob/${doc.sha}/technical.md`}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <code>{doc.shortSha}</code>
+    </a>
+    . The latest version is on{" "}
+    <a
+      href={`${github}${t.repo}/blob/main/technical.md`}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      GitHub
+    </a>
+    . Installation and first run are in the <a href="#guide">guide</a>.
+  </p>
+  <div class="note" role="note">
+    <h3>Limits to keep in mind</h3>
+    <p>{t.limits}</p>
+  </div>
+  <Fragment set:html={doc.html} />
+  <p>
+    <a href="#guide">Installation and first run →</a>
+  </p>
+</article>

@@ -1,0 +1,15 @@
+---
+import LegacyRedirect from "../../components/LegacyRedirect.astro";
+import { tools } from "../../data/tools";
+export function getStaticPaths() {
+  return tools.map((tool) => ({
+    params: { slug: tool.slug },
+    props: { tool },
+  }));
+}
+const { tool } = Astro.props;
+---
+
+<LegacyRedirect
+  target={`${import.meta.env.BASE_URL}tools/${tool.slug}/#technical`}
+/>

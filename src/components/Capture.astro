@@ -1,0 +1,80 @@
+---
+const {
+  title,
+  caption,
+  asset,
+  video,
+  width = 1200,
+  height = 675,
+} = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+
+<figure class="capture">
+  {video ? (
+    <video
+      class="capture-video"
+      controls
+      playsinline
+      preload="none"
+      poster={`${base}media/${asset}`}
+      width={width}
+      height={height}
+      aria-label={title}
+    >
+      <source src={`${base}media/${video}`} type="video/mp4" />
+      <p>
+        Your browser cannot play this video.{" "}
+        <a href={`${base}media/${video}`}>Download the MP4</a>.
+      </p>
+    </video>
+  ) : (
+    <a
+      class="capture-expand"
+      href={`${base}media/${asset}`}
+      aria-label={`Enlarge: ${title}`}
+    >
+      <img
+        src={`${base}media/${asset}`}
+        alt=""
+        width={width}
+        height={height}
+        loading="lazy"
+      />
+    </a>
+  )}
+  <figcaption>
+    <strong>{title}</strong>
+    {caption && <span>{caption}</span>}
+  </figcaption>
+</figure>
+<script>
+  const dialog = document.createElement("dialog");
+  dialog.className = "image-dialog";
+  dialog.setAttribute("aria-label", "Enlarged image");
+  const close = document.createElement("button");
+  close.type = "button";
+  close.textContent = "Close ×";
+  const image = document.createElement("img");
+  dialog.append(close, image);
+  document.body.append(dialog);
+  close.addEventListener("click", () => dialog.close());
+  dialog.addEventListener("click", (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+  document
+    .querySelectorAll<HTMLAnchorElement>(".capture-expand")
+    .forEach((link) => {
+      link.addEventListener("click", (event) => {
+        if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey)
+          return;
+        event.preventDefault();
+        const source = link.querySelector("img")!;
+        image.src = source.src;
+        image.alt =
+          link.closest("figure")?.querySelector("figcaption strong")
+            ?.textContent ?? "";
+        dialog.showModal();
+      });
+    });
+</script>

@@ -1,0 +1,299 @@
+---
+import GuideControls from "./GuideControls.astro";
+import { github } from "../data/tools";
+const { tool: t } = Astro.props;
+const trick = t.slug === "trickplay-generator",
+  cat = t.slug === "cataloger";
+const pkg = trick ? "pillow" : cat ? "XlsxWriter" : "";
+const pkgName = trick ? "Pillow" : pkg;
+const aptPackages = `python3 ffmpeg${trick ? " python3-pil" : cat ? " python3-xlsxwriter" : ""}`;
+const dnfPackages = `python3 ffmpeg${trick ? " python3-pillow" : cat ? " python3-XlsxWriter" : ""}`;
+const rpmFusion =
+  "sudo dnf install https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm";
+const ffmpegBuildCommands = [
+  "mkdir -p ffmpeg/bin",
+  "curl -L -o ffmpeg.tar.xz https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz",
+  "tar -xf ffmpeg.tar.xz --strip-components=1 -C ffmpeg/bin --wildcards '*/ffmpeg' '*/ffprobe'",
+  "rm ffmpeg.tar.xz",
+  "ffmpeg/bin/ffprobe -version",
+].join("\n");
+---
+
+<article class="wrap prose product-document">
+  <h2 id="requirements">Requirements</h2>
+  <p>{t.requirements}</p>
+  <ul>
+    <li>Keep this application in its own writable folder.</li>
+    <li>Read access to all source media folders is required.</li>
+    <li>
+      {trick
+        ? "Write access beside source videos is required for trickplay output."
+        : cat
+          ? "The application writes its catalog under data/ and reports under reports/ in the project folder."
+          : "Write access to the selected output folder is required for copied videos and manifests."}
+    </li>
+    <li>Original videos are read without modification.</li>
+  </ul>
+  <nav class="doc-toc" aria-label="On this page">
+    <strong>In this guide</strong>
+    <a href="#requirements">Requirements</a>
+    <a href="#source">Get the source</a>
+    <a href="#dependencies">Install dependencies</a>
+    <a href="#first-run">Configure and run</a>
+    <a href="#continue">Stop and continue</a>
+    {trick && <a href="#unattended">Unattended operation</a>}
+    <a href="#troubleshooting">Troubleshooting</a>
+  </nav>
+  <GuideControls />
+  <h2 id="source">1. Get the source</h2>
+  <p>
+    Open the{" "}
+    <a href={`${github}${t.repo}`} target="_blank" rel="noopener noreferrer">
+      project repository
+    </a>
+    , choose Code → Download ZIP, then extract it into a permanent, writable
+    folder. Alternatively, use Git:
+  </p>
+  <pre
+    data-copy
+  ><code>{`git clone ${github}${t.repo}.git\ncd ${t.repo}`}</code></pre>
+  <h2 id="dependencies">2. Install dependencies</h2>
+  <div data-platform="windows">
+    <h3>Windows</h3>
+    <ol>
+      <li>
+        Install{" "}
+        <a
+          href="https://www.python.org/downloads/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Python 3.10 or newer
+        </a>
+        . Enable “Add python.exe to PATH”.
+      </li>
+      <li>
+        Download a Windows FFmpeg build from{" "}
+        <a
+          href="https://www.gyan.dev/ffmpeg/builds/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Gyan’s FFmpeg builds
+        </a>
+        . Extract the binaries into the layout below. The tool does not download
+        FFmpeg for you.
+      </li>
+    </ol>
+    <pre><code>{`${t.repo}/\n  main.py\n  ffmpeg/\n    bin/\n      ffprobe.exe${trick?'\n      ffmpeg.exe':''}`}</code></pre>
+    <p>
+      Windows uses the project’s FFmpeg folder; it does not search PATH for
+      these binaries.
+    </p>
+    {pkg && (
+      <>
+        <p>
+          {cat
+            ? "For Excel reports only, install XlsxWriter. Skip this if you only need JSON and TXT."
+            : "Install Pillow to assemble the preview images."}
+        </p>
+        <pre data-copy><code>{`py -3 -m pip install ${pkg}`}</code></pre>
+      </>
+    )}
+    {trick && (
+      <p>
+        For an NVIDIA graphics card, keep the graphics driver up to date.
+        Nothing else is needed. Without a GPU everything runs on the CPU.
+      </p>
+    )}
+    <p>From the project folder, start the program:</p>
+    <pre data-copy><code>py -3 main.py</code></pre>
+  </div>
+  <div data-platform="linux">
+    <h3>Linux: packages from your distribution</h3>
+    <p>
+      The simplest way.{" "}
+      {cat ? "The XlsxWriter package is only needed for Excel reports." : ""}
+      {trick ? "Pillow comes from the distribution too." : ""}
+      {!pkg ? "No Python package beyond Python itself is needed." : ""}
+    </p>
+    <p class="code-label">Debian, Ubuntu</p>
+    <pre data-copy><code>{`sudo apt install ${aptPackages}`}</code></pre>
+    <p class="code-label">Fedora</p>
+    <p>
+      Fedora’s own <code>ffmpeg-free</code> leaves out H.264 and HEVC, which
+      most videos use. Enable RPM Fusion and install its FFmpeg instead:
+    </p>
+    <pre data-copy><code>{rpmFusion}</code></pre>
+    <pre
+      data-copy
+    ><code>{`sudo dnf install --allowerasing ${dnfPackages}`}</code></pre>
+    <p>From the project folder, start the program:</p>
+    <pre data-copy><code>python3 main.py</code></pre>
+    {pkg && (
+      <>
+        <h3>Linux: virtual environment</h3>
+        <p>
+          Use this instead of the packages above if you prefer to keep {pkgName}{" "}
+          out of the system Python.
+        </p>
+        <p class="code-label">Debian, Ubuntu</p>
+        <pre
+          data-copy
+        ><code>sudo apt install python3 python3-venv ffmpeg</code></pre>
+        <p class="code-label">Fedora</p>
+        <p>
+          Enable RPM Fusion as above first; Fedora’s own{" "}
+          <code>ffmpeg-free</code> leaves out H.264 and HEVC.
+        </p>
+        <pre
+          data-copy
+        ><code>sudo dnf install --allowerasing python3 ffmpeg</code></pre>
+        <p>
+          Then, in the project folder, create the environment and install{" "}
+          {pkgName}:
+        </p>
+        <pre
+          data-copy
+        ><code>{`python3 -m venv .venv\n.venv/bin/pip install ${pkg}`}</code></pre>
+        <p>Start it with the interpreter from the environment:</p>
+        <pre data-copy><code>.venv/bin/python main.py</code></pre>
+      </>
+    )}
+    {trick && (
+      <p>
+        For an NVIDIA graphics card, install the proprietary driver. The{" "}
+        <code>nvidia-smi</code> command must work.
+      </p>
+    )}
+    <details class="guide-details">
+      <summary>Optional: your own static FFmpeg build</summary>
+      <p>
+        The system FFmpeg is enough. If you want a specific build instead,
+        download a static one into the ffmpeg/bin folder next to main.py. A
+        build there takes precedence over the system binaries;{" "}
+        {trick ? "ffmpeg and ffprobe" : "ffprobe"} must be in it. The download
+        commands are the same on Debian, Ubuntu and Fedora. On a 64-bit ARM
+        machine such as a Raspberry Pi, use <code>arm64</code> instead of{" "}
+        <code>amd64</code> in the download address.
+      </p>
+      <p>First install curl and xz:</p>
+      <p class="code-label">Debian, Ubuntu</p>
+      <pre data-copy><code>sudo apt install curl xz-utils</code></pre>
+      <p class="code-label">Fedora</p>
+      <pre data-copy><code>sudo dnf install curl xz</code></pre>
+      <p>
+        Then, from the project folder (the one that holds main.py), download the
+        build:
+      </p>
+      <pre data-copy><code>{ffmpegBuildCommands}</code></pre>
+    </details>
+    <p>
+      More detail is in the{" "}
+      <a
+        href={`${github}${t.repo}/blob/main/README.md`}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        project README
+      </a>
+      .
+    </p>
+  </div>
+  <h2 id="first-run">3. Configure and run</h2>
+  <ol>
+    {t.steps.map((s) => (
+      <li>{s}</li>
+    ))}
+  </ol>
+  <p>
+    The menus are in English. Slovenian is included and can be chosen under
+    Configuration → Language.
+  </p>
+  {trick && (
+    <div class="note" role="note">
+      <h3>Jellyfin setup</h3>
+      <p>
+        Enable “Save trickplay images next to media” in the Jellyfin library
+        settings. The generator writes Movie.trickplay folders beside the source
+        video. It needs write access there. Check your own hardware with the
+        benchmark and self-test.
+      </p>
+    </div>
+  )}
+  <div class="note" role="note">
+    <h3>What a successful first run produces</h3>
+    <p>
+      {trick
+        ? "A .trickplay folder beside each successfully processed video, containing JPEG sprite sheets. Check it with Verify."
+        : cat
+          ? "A local catalog and the report formats you selected under reports/, grouped by date."
+          : "An output library containing copies of your selected videos, with manifests tracking build progress."}
+    </p>
+  </div>
+  <h2 id="continue">4. Stop and continue</h2>
+  <p>
+    {trick
+      ? "During generation, press Ctrl+C once to let active videos finish; a second press stops immediately. Choose Generate / Resume later. Valid completed outputs are skipped."
+      : cat
+        ? "Press Ctrl+C once to stop a scan gracefully. Run a normal scan again to reuse unchanged metadata."
+        : "Press Ctrl+C once to stop gracefully. Build / Resume continues the copy plan later."}
+  </p>
+  {trick && (
+    <>
+      <h2 id="unattended">Unattended operation</h2>
+      <p>
+        Configure media folders and settings in the menu first. These actions
+        run without interactive questions:
+      </p>
+      {["windows", "linux"].map((platform) => (
+        <div data-platform={platform}>
+          <h3>{platform === "windows" ? "Windows" : "Linux"}</h3>
+          <pre
+            data-copy
+          ><code>{["--generate --dry-run", "--generate", "--verify", "--self-test"].map(flag => `${platform === "windows" ? "py -3" : "python3"} main.py ${flag}`).join("\n")}</code></pre>
+        </div>
+      ))}
+      <p>
+        Use Task Scheduler on Windows or cron / a systemd timer on Linux. The
+        dry run plans generation without creating trickplay output. Verify
+        checks existing previews without modifying them; the application can
+        still write its own logs.
+      </p>
+    </>
+  )}
+  <h2 id="troubleshooting">Troubleshooting</h2>
+  <ul>
+    <li>
+      FFprobe not found: check the project-local folder on Windows, or the
+      local/system installation on Linux.
+    </li>
+    <li>
+      Source unavailable: verify that your disk or network share is mounted and
+      readable by the user running the tool. On Linux, check a CIFS or NFS share
+      outside the program, for example <code>ls /mnt/media</code>. With a
+      systemd automount, reading the path triggers the mount.
+    </li>
+    <li>
+      Permission denied: check access to the project folder and relevant output
+      folder.
+    </li>
+    {trick && (
+      <li>
+        GPU trouble: run the backend compatibility check and benchmark. CPU
+        operation is available without a GPU.
+      </li>
+    )}
+  </ul>
+  <p>
+    Still need help?{" "}
+    <a
+      href={`${github}${t.repo}/issues`}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Report an issue on GitHub ↗
+    </a>{" "}
+    or <a href="#technical">read the technical reference →</a>.
+  </p>
+</article>

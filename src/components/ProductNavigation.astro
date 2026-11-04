@@ -1,0 +1,46 @@
+<nav class="product-navigation" aria-label="Product sections">
+  <div class="wrap">
+    <a href="#overview" aria-current="location">
+      Overview
+    </a>
+    <a href="#guide">Guide</a>
+    <a href="#technical">Technical</a>
+  </div>
+</nav>
+<script>
+  const panels = [
+    ...document.querySelectorAll<HTMLElement>("[data-product-panel]"),
+  ];
+  const links = [
+    ...document.querySelectorAll<HTMLAnchorElement>(".product-navigation a"),
+  ];
+  // Native links retain shareable URLs and browser history. Without JS all sections remain readable.
+  function update() {
+    let target: HTMLElement | null = null;
+    try {
+      target = document.getElementById(
+        decodeURIComponent(location.hash.slice(1)),
+      );
+    } catch {}
+    const active =
+      target?.closest<HTMLElement>("[data-product-panel]") || panels[0];
+    panels.forEach((panel) => (panel.hidden = panel !== active));
+    links.forEach((link) => {
+      if (link.hash === `#${active.id}`)
+        link.setAttribute("aria-current", "location");
+      else link.removeAttribute("aria-current");
+    });
+  }
+  const toc = document.querySelector<HTMLElement>("[data-technical-toc]");
+  document
+    .querySelectorAll<HTMLElement>("#technical article h2[id]")
+    .forEach((heading) => {
+      const link = document.createElement("a");
+      link.href = `#${heading.id}`;
+      link.textContent = heading.textContent;
+      toc?.append(link);
+    });
+  if (toc) toc.hidden = false;
+  update();
+  window.addEventListener("hashchange", () => update());
+</script>

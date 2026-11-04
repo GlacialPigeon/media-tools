@@ -1,0 +1,125 @@
+---
+import { github, tools } from "../data/tools";
+const base = import.meta.env.BASE_URL;
+const tool = (slug: string, label: string) =>
+  `<a href="${base}tools/${slug}/">${label}</a>`;
+const groups = [
+  {
+    id: "faq-start",
+    title: "Getting started",
+    entries: [
+      [
+        "Which tool should I start with?",
+        `Start with the job you want done. ${tool("trickplay-generator", "Trickplay Generator")} makes the seek-bar preview images for Jellyfin. ${tool("cataloger", "Cataloger")} turns your folders into a detailed inventory with Excel, JSON and TXT reports. ${tool("diversity-sampler", "Diversity Sampler")} builds a small, varied test library from your own videos. They are standalone, each with its own settings and saved data, so install only the ones you need.`,
+      ],
+      [
+        "What do I need installed?",
+        "Python 3.10 or newer, plus FFmpeg tools. Trickplay Generator needs FFmpeg, FFprobe and the Pillow package. Cataloger and Diversity Sampler need only FFprobe; Cataloger adds XlsxWriter if you want Excel reports. The guide for each tool lists the exact steps for Windows and Linux.",
+      ],
+      [
+        "Is there a window or a web page to click through?",
+        "No. They are Python terminal applications for Windows and Linux, driven by a numbered menu. This website only explains them; nothing here runs your media.",
+      ],
+      [
+        "Do I need Jellyfin?",
+        "Only for the previews. Cataloger and Diversity Sampler work without it. Trickplay Generator writes preview images in the layout Jellyfin reads. These are independent projects and are not affiliated with Jellyfin.",
+      ],
+    ],
+  },
+  {
+    id: "faq-files",
+    title: "Your files",
+    entries: [
+      [
+        "Will my original videos be changed?",
+        "No. The tools read your source videos and never modify them. Cataloger writes its own database and reports. Diversity Sampler copies the videos it picks into the output folder you choose. Trickplay Generator writes a preview folder next to each video, for example <code>Movie.trickplay</code>.",
+      ],
+      [
+        "Can I see what it will do before it does it?",
+        "Yes. Trickplay Generator shows its plan and the disk space it needs, then asks once before it starts, and its command line has a dry run. Diversity Sampler lets you review a preview of the selection before you build anything.",
+      ],
+      [
+        "What if it stops halfway?",
+        "Run it again. Trickplay Generator skips valid output and stages new files, checking them before it replaces an old preview. Diversity Sampler tracks its copy plan, treats finished files as done and copies partial ones again. Cataloger re-reads only the files that changed.",
+      ],
+      [
+        "Does it work with a network share or NAS?",
+        "Yes, once the share is mounted or otherwise reachable, and you have read permission. Trickplay Generator also needs write permission next to the videos. Cataloger treats a mapped drive and its network path as one source, and it skips a source that is offline instead of reporting its files as deleted.",
+      ],
+    ],
+  },
+  {
+    id: "faq-speed",
+    title: "Jellyfin and speed",
+    entries: [
+      [
+        "Which Jellyfin setting do I need?",
+        "Turn on “Save trickplay images next to media” for the library. Jellyfin reads the preview folders beside your videos only with that option; otherwise it looks in its own metadata folder. The default image settings are Jellyfin’s own and can be changed.",
+      ],
+      [
+        "Do I need a GPU?",
+        "No, the CPU works. A GPU can be faster, but it depends on the video, your FFmpeg build and your hardware, so run the built-in benchmark on a few of your own videos and accept its suggestion. Intel Quick Sync and Linux VAAPI are included but have not been tested on real hardware yet.",
+      ],
+      [
+        "Why is the first run slow?",
+        "The first pass has to look at everything: Cataloger and Diversity Sampler read every file once, and Trickplay Generator builds every preview. After that, valid output is skipped and later scans only look at what changed, so repeat runs are much quicker.",
+      ],
+    ],
+  },
+  {
+    id: "faq-updates",
+    title: "Updates and help",
+    entries: [
+      [
+        "Where do I get updates?",
+        "From each tool’s GitHub repository and its Releases page. Installation instructions are available for every tool.",
+      ],
+      [
+        "Something doesn’t work. Where do I ask?",
+        "Open an issue in the tool’s GitHub repository and say which tool, your operating system and what you saw. The technical reference for each tool explains the logs it keeps.",
+      ],
+    ],
+  },
+];
+---
+
+<section class="wrap section faq" id="faq" aria-labelledby="faq-title">
+  <div class="faq-intro">
+    <div class="eyebrow">COMMON QUESTIONS</div>
+    <h2 id="faq-title">Before you begin.</h2>
+    <p>
+      Short answers about what you need, what the tools touch and what to
+      expect.
+    </p>
+    <p class="faq-more">
+      Still unsure? Each tool has a guide and a technical reference, and its
+      repository is on GitHub.
+    </p>
+    <div class="faq-repos">
+      {tools.map((t) => (
+        <a
+          href={`${github}${t.repo}`}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t.short} ↗
+        </a>
+      ))}
+    </div>
+  </div>
+  <div class="faq-groups">
+    {groups.map((group) => (
+      <section aria-labelledby={`${group.id}-title`}>
+        <h3 id={`${group.id}-title`}>{group.title}</h3>
+        <div class="faq-list">
+          {group.entries.map(([q, a]) => (
+            <details>
+              <summary>{q}</summary>
+              <p set:html={a} />
+            </details>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+</section>

@@ -1,0 +1,377 @@
+---
+import FAQ from "../components/FAQ.astro";
+import Layout from "../layouts/Layout.astro";
+import Demo from "../components/Demo.astro";
+import { tools } from "../data/tools";
+const base = import.meta.env.BASE_URL;
+import { libraryTest } from "../data/library-test";
+const parts = (time = "") => time.match(/\d+\s+\w+/g) ?? [];
+const hours = (time = "") =>
+  parts(time).reduce((sum, part) => {
+    const [amount, unit] = part.split(/\s+/);
+    return sum + Number(amount) * (unit.startsWith("day") ? 24 : 1);
+  }, 0);
+const serverTime = parts(libraryTest.machines[0]?.time);
+const savedHours =
+  hours(libraryTest.machines[0]?.time) - hours(libraryTest.machines[1]?.time);
+const saved =
+  libraryTest.machines.length > 1 && savedHours > 0
+    ? [
+        [Math.floor(savedHours / 24), "days"],
+        [savedHours % 24, "hours"],
+      ]
+    : [];
+---
+
+<Layout>
+  <section class="wrap hero">
+    <div class="eyebrow">
+      <span class="live-dot"></span> OPEN SOURCE. LOCAL BY DESIGN.
+    </div>
+    <div class="hero-grid">
+      <div>
+        <h1>
+          Your library.
+          <br />
+          Your hardware.
+          <br />
+          <span>Your rules.</span>
+        </h1>
+        <p class="lead">
+          Know what you have. Test what matters.
+          <br />
+          Make every seek a little better.
+        </p>
+        <p class="hero-description">
+          Three independent tools for people who care about their media
+          libraries. Built for Windows and Linux, without a cloud in the middle.
+        </p>
+        <div class="actions">
+          <a class="button primary" href={`${base}tools/trickplay-generator/`}>
+            Meet Trickplay Generator <span>→</span>
+          </a>
+          <a class="text-link" href="#tools">
+            Explore the tools ↓
+          </a>
+        </div>
+      </div>
+      <div class="hero-demo">
+        <div class="floating-label">
+          LESS LOAD ON YOUR SERVER. MORE PREVIEW.
+        </div>
+        <Demo placement="home" />
+        <div class="demo-under">
+          <span>Media Trickplay Generator</span>
+          <a
+            href="https://jellyfin.org/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Works with Jellyfin ↗
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="principles">
+      <span>
+        <b>01</b> Your media stays yours
+      </span>
+      <span>
+        <b>02</b> Windows + Linux
+      </span>
+      <span>
+        <b>03</b> Three standalone tools
+      </span>
+      <span>
+        <b>04</b> Open source
+      </span>
+    </div>
+  </section>
+  <section class="section wrap" id="tools">
+    <div class="section-heading">
+      <div>
+        <div class="eyebrow">THE TOOLKIT</div>
+        <h2>
+          Good on their own.
+          <br />
+          Better in your workflow.
+        </h2>
+      </div>
+      <p>
+        Start with the job you need to do.
+        <br />
+        No suite to install. No dependency on each other.
+      </p>
+    </div>
+    <div class="tool-grid">
+      {tools.map((t, i) => (
+        <a class={`tool-card ${t.color}`} href={`${base}tools/${t.slug}/`}>
+          <div class="between">
+            <span class="tool-icon">{t.icon}</span>
+            <span class="eyebrow">{i === 0 ? "FEATURED PROJECT" : t.tag}</span>
+          </div>
+          <h3>{t.name}</h3>
+          <p>{t.description}</p>
+          <div class="card-bottom">
+            <span>
+              {i === 0
+                ? "Make seek-bar previews"
+                : i === 1
+                  ? "Understand your library"
+                  : "Build a varied test library"}
+            </span>
+            <span>→</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+  <section class="wrap section" id="compare">
+    <div class="eyebrow">CHOOSE YOUR TOOL</div>
+    <h2>One job. The right tool.</h2>
+    <div
+      class="table-scroll"
+      role="region"
+      aria-label="Tool comparison"
+      tabindex="0"
+    >
+      <table class="stack-table">
+        <caption>
+          Three independent applications — no shared installation required
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Tool</th>
+            <th scope="col">Use it to</th>
+            <th scope="col">Input</th>
+            <th scope="col">Output</th>
+            <th scope="col">Requirements</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Trickplay Generator</th>
+            <td data-label="Use it to">Create Jellyfin seek previews</td>
+            <td data-label="Input">Your video folders</td>
+            <td data-label="Output">Sprite sheets beside videos</td>
+            <td data-label="Requirements">Python, FFmpeg, FFprobe, Pillow</td>
+          </tr>
+          <tr>
+            <th scope="row">Cataloger</th>
+            <td data-label="Use it to">Understand your library</td>
+            <td data-label="Input">Your media folders</td>
+            <td data-label="Output">
+              SQLite catalog; Excel, JSON, TXT reports
+            </td>
+            <td data-label="Requirements">
+              Python, FFprobe; optional XlsxWriter
+            </td>
+          </tr>
+          <tr>
+            <th scope="row">Diversity Sampler</th>
+            <td data-label="Use it to">Build a varied test library</td>
+            <td data-label="Input">Your video folders</td>
+            <td data-label="Output">Copied videos and build manifests</td>
+            <td data-label="Requirements">Python, FFprobe</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p>
+      All three require Python 3.10+. Source videos remain unchanged. Each
+      application manages its own state.
+    </p>
+  </section>
+  <section class="section feature-band">
+    <div class="wrap split">
+      <div>
+        <div class="eyebrow">THE ORIGINAL PROJECT</div>
+        <h2>
+          Let your PC do
+          <br />
+          the heavy lifting.
+        </h2>
+        <p class="lead">Your media server has movies to play.</p>
+        <p>
+          Generate Jellyfin trickplay sprite sheets on a separate, stronger
+          computer with access to your media. Benchmark CPU and GPU paths using
+          your own videos, then build previews beside the originals.
+        </p>
+        <a class="text-link" href={`${base}tools/trickplay-generator/`}>
+          Inside Trickplay Generator →
+        </a>
+      </div>
+      <div class="output-panel">
+        <div class="eyebrow">FROM VIDEO TO PREVIEW</div>
+        <div class="file-line">
+          ▹ Movie.mkv <span>read only</span>
+        </div>
+        <div class="file-tree">
+          └ Movie.trickplay/
+          <br />
+          &nbsp;&nbsp; └ 320 - 10x10/
+          <br />
+          &nbsp;&nbsp;&nbsp;&nbsp; ├ 0.jpg
+          <br />
+          &nbsp;&nbsp;&nbsp;&nbsp; └ 1.jpg
+        </div>
+        <p>Build → validate → replace</p>
+        <small>
+          Existing valid previews stay safe until their replacement validates.
+        </small>
+      </div>
+    </div>
+  </section>
+  <section class="section wrap" id="story" aria-labelledby="story-title">
+    <div class="split story-intro">
+      <div>
+        <div class="eyebrow">OUR STORY</div>
+        <h2 id="story-title">
+          A small task.
+          <br />A reasonable detour.
+        </h2>
+        <p class="story-tagline">
+          Let your PC suffer so your movie doesn’t buffer.
+        </p>
+      </div>
+      <div class="story">
+        <p>
+          Jellyfin could generate trickplay previews on my server. My PC had
+          considerably more powerful hardware. Moving the work there seemed like
+          a sensible way to save some time.
+        </p>
+        <p>
+          So, naturally, I started writing an application. Then two more
+          applications to help test the first one. A perfectly proportionate
+          response to a progress bar.
+        </p>
+      </div>
+    </div>
+    <div class="story-development">
+      <ol
+        class="origin-timeline"
+        aria-label="How the three tools came together"
+      >
+        <li>
+          <span class="origin-step" aria-hidden="true">
+            01
+          </span>
+          <div>
+            <div class="eyebrow">THE PLAN</div>
+            <h3>Put the PC to work.</h3>
+            <p>
+              Media Trickplay Generator started with one job: generate previews
+              on the PC, beside the media, while the server gets on with serving
+              movies.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="origin-step" aria-hidden="true">
+            02
+          </span>
+          <div>
+            <div class="eyebrow">A SMALL PREREQUISITE</div>
+            <h3>First, understand the library.</h3>
+            <p>
+              Testing needed a clear picture of the codecs, streams and formats
+              in the collection. Media Cataloger was born. Apparently, saving
+              time required a database.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="origin-step" aria-hidden="true">
+            03
+          </span>
+          <div>
+            <div class="eyebrow">ONE MORE THING</div>
+            <h3>Then, stop copying files by hand.</h3>
+            <p>
+              Finding varied test videos and copying them manually got old
+              quickly. Media Diversity Sampler became the second supporting
+              tool. The shortcut now had dependencies. The applications,
+              thankfully, do not.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="origin-step" aria-hidden="true">
+            04
+          </span>
+          <div>
+            <div class="eyebrow">BACK TO THE ORIGINAL TASK</div>
+            <h3>Finally, generate some trickplay.</h3>
+            <p>
+              With both supporting tools ready, Media Trickplay Generator was
+              completed. Three standalone applications, each useful on its own.
+              Jellyfin, meanwhile, had plenty of time to finish.
+            </p>
+          </div>
+        </li>
+      </ol>
+      <aside class="time-saved" aria-labelledby="time-saved-title">
+        <div class="eyebrow">THE TIME-SAVING STRATEGY</div>
+        <h3 id="time-saved-title">An excellent use of time.</h3>
+        <dl>
+          <div>
+            <dt>Let Jellyfin generate on the server</dt>
+            <dd>
+              {serverTime.map((part, i) => {
+                const [amount, unit] = part.split(/\s+/);
+                return (
+                  <>
+                    {i > 0 && " "}
+                    {amount} <span>{unit}</span>
+                  </>
+                );
+              })}
+            </dd>
+          </div>
+          {saved.length > 0 && (
+            <div>
+              <dt>Saved by generating on the PC instead</dt>
+              <dd>
+                {saved.map(([amount, unit], i) => (
+                  <>
+                    {i > 0 && " "}
+                    {amount} <span>{unit}</span>
+                  </>
+                ))}
+              </dd>
+            </div>
+          )}
+          <div>
+            <dt>Develop and test three applications</dt>
+            <dd>
+              158 <span>days</span> 16 <span>hours</span>
+            </dd>
+          </div>
+        </dl>
+        <p class="time-saved-punchline">Time saved. Eventually.</p>
+        <p>
+          The hardware was the upgrade.
+          <br />
+          The development time was a personal choice.
+        </p>
+      </aside>
+    </div>
+    <div class="story-outro">
+      <p>One original idea. Two useful detours. Three independent tools.</p>
+      <a class="text-link" href="#tools">
+        Meet the tools →
+      </a>
+    </div>
+  </section>
+  <FAQ />
+  <section class="wrap cta">
+    <div>
+      <div class="eyebrow">READY WHEN YOU ARE</div>
+      <h2>Bring your own library.</h2>
+      <p>Choose a tool, follow the guide, keep control.</p>
+    </div>
+    <a class="button primary" href="#tools">
+      Get started ↓
+    </a>
+  </section>
+</Layout>

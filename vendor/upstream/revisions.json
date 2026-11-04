@@ -1,0 +1,11 @@
+{
+  "MediaCataloger": {
+    "sha": "2b2a71890cae561585f8c9c0f7425afed793a858"
+  },
+  "MediaDiversitySampler": {
+    "sha": "2984c95ab1b5f881e32f701fd85bc567982f8197"
+  },
+  "MediaTrickplayGenerator": {
+    "sha": "f602b3355b628d6a947044055f8ce5a826deb4dc"
+  }
+}

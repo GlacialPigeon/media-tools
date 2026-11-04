@@ -1,0 +1,265 @@
+---
+import { trickplayVideos } from "../data/trickplay";
+const { placement = "product" } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const videos = trickplayVideos.map((video) => ({
+  ...video,
+  poster: `${base}${video.poster}`,
+  sheets: video.sheets.map(
+    (sheet: string) =>
+      `${base}${sheet.split("/").map(encodeURIComponent).join("/")}`,
+  ),
+}));
+const first = videos[0];
+const id = `${placement}-trickplay`;
+const time = (s: number) =>
+  `${Math.floor(s / 60)
+    .toString()
+    .padStart(2, "0")}:${Math.floor(s % 60)
+    .toString()
+    .padStart(2, "0")}`;
+---
+
+<figure
+  class="trickplay-player"
+  data-trickplay-player
+  data-videos={JSON.stringify(videos)}
+>
+  <div
+    class="trickplay-film-buttons"
+    role="group"
+    aria-label="Choose film"
+    data-film-buttons
+    hidden
+  >
+    {videos.map((video, index) => (
+      <button
+        type="button"
+        data-video-choice={index}
+        aria-pressed={index === 0 ? "true" : "false"}
+      >
+        {video.title}
+      </button>
+    ))}
+  </div>
+  <div class="trickplay-screen">
+    <img
+      src={first.poster}
+      alt={first.title}
+      width="1672"
+      height="941"
+      loading="lazy"
+      data-poster
+    />
+    <div class="trickplay-seek-controls" hidden data-seek-controls>
+      <label class="sr-only" for={`${id}-seek`}>
+        Explore the timeline
+      </label>
+      <div class="trickplay-timeline" data-timeline>
+        <div class="trickplay-hover" data-hover hidden aria-hidden="true">
+          <canvas
+            width={first.thumbnailWidth}
+            height={first.thumbnailHeight}
+          ></canvas>
+        </div>
+        <input
+          id={`${id}-seek`}
+          type="range"
+          min="0"
+          max={first.durationSeconds}
+          step="1"
+          value="0"
+          aria-valuetext={`00:00 of ${time(first.durationSeconds)}`}
+        />
+      </div>
+      <p class="sr-only" role="status" data-preview-status></p>
+    </div>
+  </div>
+</figure>
+<script>
+  import { spriteAt, valueFromPointer } from "../lib/trickplay.mjs";
+  document
+    .querySelectorAll<HTMLElement>("[data-trickplay-player]")
+    .forEach((player) => {
+      const videos = JSON.parse(player.dataset.videos!);
+      let video = videos[0],
+        request = 0;
+      const seek = player.querySelector<HTMLInputElement>(
+        'input[type="range"]',
+      )!;
+      const timeline = player.querySelector<HTMLElement>("[data-timeline]")!;
+      const bubble = player.querySelector<HTMLElement>("[data-hover]")!;
+      const canvas = bubble.querySelector("canvas")!;
+      const context = canvas.getContext("2d")!;
+      const cache = new Map<string, Promise<HTMLImageElement>>();
+      const time = (s: number) =>
+        `${Math.floor(s / 60)
+          .toString()
+          .padStart(2, "0")}:${Math.floor(s % 60)
+          .toString()
+          .padStart(2, "0")}`;
+      const load = (url: string) => {
+        if (!cache.has(url))
+          cache.set(
+            url,
+            new Promise((resolve, reject) => {
+              const image = new Image();
+              image.onload = () => resolve(image);
+              image.onerror = () => {
+                cache.delete(url);
+                reject(new Error("Image unavailable"));
+              };
+              image.src = url;
+            }),
+          );
+        return cache.get(url)!;
+      };
+      function committedTime() {
+        const value = Number(seek.value);
+        seek.style.setProperty(
+          "--seek-progress",
+          `${(value / video.durationSeconds) * 100}%`,
+        );
+        seek.setAttribute(
+          "aria-valuetext",
+          `${time(value)} of ${time(video.durationSeconds)}`,
+        );
+      }
+      async function preview(seconds: number, fraction: number) {
+        const token = ++request,
+          current = video;
+        const cell = spriteAt(current, seconds);
+        bubble.hidden = false;
+        const availableHeight =
+          timeline.getBoundingClientRect().top -
+          player
+            .querySelector<HTMLElement>(".trickplay-screen")!
+            .getBoundingClientRect().top -
+          12;
+        const width = Math.min(
+          224,
+          timeline.clientWidth,
+          Math.max(
+            64,
+            ((availableHeight - 8) * current.thumbnailWidth) /
+              current.thumbnailHeight,
+          ),
+        );
+        bubble.style.width = `${width}px`;
+        bubble.style.left = `${Math.max(0, Math.min(timeline.clientWidth - width, fraction * timeline.clientWidth - width / 2))}px`;
+        canvas.width = current.thumbnailWidth;
+        canvas.height = current.thumbnailHeight;
+        try {
+          const image = await load(current.sheets[cell.sheet]);
+          if (token !== request) return;
+          if (
+            cell.x + current.thumbnailWidth > image.naturalWidth ||
+            cell.y + current.thumbnailHeight > image.naturalHeight
+          )
+            throw new Error("Image dimensions do not match metadata");
+          context.drawImage(
+            image,
+            cell.x,
+            cell.y,
+            current.thumbnailWidth,
+            current.thumbnailHeight,
+            0,
+            0,
+            current.thumbnailWidth,
+            current.thumbnailHeight,
+          );
+          player.querySelector("[data-preview-status]")!.textContent = "";
+        } catch {
+          if (token === request) {
+            bubble.hidden = true;
+            player.querySelector("[data-preview-status]")!.textContent =
+              "Preview image unavailable.";
+          }
+        }
+      }
+      const hide = () => {
+        bubble.hidden = true;
+        request++;
+      };
+      let dragging = false;
+      const dragPreview = () => {
+        if (dragging)
+          preview(
+            Number(seek.value),
+            Number(seek.value) / video.durationSeconds,
+          );
+      };
+      const stopDragging = () => {
+        dragging = false;
+        hide();
+      };
+      // Touch browsers (notably iOS Safari) do not move a native range thumb to
+      // a tap on the track, so the pointer position is mapped to a value here
+      // for every pointer type. Keyboard use stays native.
+      const setFromPointer = (event: PointerEvent) => {
+        const box = seek.getBoundingClientRect();
+        // The thumb size lives in the stylesheet (--seek-thumb).
+        const thumb =
+          parseFloat(getComputedStyle(seek).getPropertyValue("--seek-thumb")) ||
+          14;
+        const value = String(
+          valueFromPointer(
+            event.clientX,
+            box.left,
+            box.width,
+            thumb,
+            video.durationSeconds,
+          ),
+        );
+        if (value === seek.value) return;
+        seek.value = value;
+        seek.dispatchEvent(new Event("input", { bubbles: true }));
+      };
+      seek.addEventListener("pointerdown", (event) => {
+        if (event.pointerType === "mouse" && event.button !== 0) return;
+        event.preventDefault();
+        dragging = true;
+        if (event.pointerType === "mouse") seek.focus({ preventScroll: true });
+        seek.setPointerCapture(event.pointerId);
+        setFromPointer(event);
+        dragPreview();
+      });
+      seek.addEventListener("pointermove", (event) => {
+        if (dragging) setFromPointer(event);
+      });
+      window.addEventListener("pointerup", stopDragging);
+      window.addEventListener("pointercancel", stopDragging);
+      window.addEventListener("blur", stopDragging);
+      seek.addEventListener("input", () => {
+        committedTime();
+        if (dragging) dragPreview();
+        else hide();
+      });
+      seek.addEventListener("blur", stopDragging);
+      seek.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") stopDragging();
+      });
+      const filmButtons = [
+        ...player.querySelectorAll<HTMLButtonElement>("[data-video-choice]"),
+      ];
+      filmButtons.forEach((button) =>
+        button.addEventListener("click", () => {
+          video = videos[Number(button.dataset.videoChoice)];
+          seek.max = String(video.durationSeconds);
+          seek.value = "0";
+          stopDragging();
+          committedTime();
+          const poster =
+            player.querySelector<HTMLImageElement>("[data-poster]")!;
+          poster.src = video.poster;
+          poster.alt = video.title;
+          filmButtons.forEach((item) =>
+            item.setAttribute("aria-pressed", String(item === button)),
+          );
+        }),
+      );
+      player.querySelector<HTMLElement>("[data-film-buttons]")!.hidden = false;
+      player.querySelector<HTMLElement>("[data-seek-controls]")!.hidden = false;
+      committedTime();
+    });
+</script>

@@ -1,0 +1,14 @@
+{
+  "MediaTrickplayGenerator": [
+    {
+      "description": "Windows adapter is tested; only vaapi and qsv are untested on real hardware",
+      "from": "> The Linux `vaapi` path and the Windows adapter were written to the same design as the tested code but have **not yet\n> been exercised on real GPUs / a real Windows machine**. Use the benchmark and the self-test before trusting them.",
+      "to": "> The Linux `vaapi` path and Intel Quick Sync (`qsv`) were written to the same design as the tested code but have **not yet\n> been exercised on real GPUs**. Use the benchmark and the self-test before trusting them."
+    },
+    {
+      "description": "Not-done-yet list without the Windows adapter",
+      "from": "* Hardware validation of `vaapi` (Linux) and the Windows adapter.",
+      "to": "* Hardware validation of `vaapi` (Linux) and `qsv`."
+    }
+  ]
+}

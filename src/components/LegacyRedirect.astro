@@ -1,0 +1,33 @@
+---
+const { target } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Page moved — Media Tools</title>
+    <meta
+      name="description"
+      content="This content is now part of the Media Tools product pages."
+    />
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={new URL(target, Astro.site)} />
+    <meta http-equiv="refresh" content={`0;url=${target}`} />
+  </head>
+  <body>
+    <a href="#main">Skip to content</a>
+    <main id="main">
+      <h1>This page has moved.</h1>
+      <p>
+        <a href={target}>Continue to Media Tools →</a>
+      </p>
+    </main>
+    <script is:inline define:vars={{ target }}>
+      const url = new URL(target, location.origin);
+      if (location.hash) url.hash = location.hash;
+      location.replace(url.href);
+    </script>
+  </body>
+</html>

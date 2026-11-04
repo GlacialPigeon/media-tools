@@ -1,0 +1,355 @@
+========================================================================
+MEDIA CATALOGER v1.0.0
+========================================================================
+
+Generated: 2026-11-02T18:14:53+01:00
+Scope: All Sources - Combined
+
+------------------------------------------------------------------------
+SUMMARY
+------------------------------------------------------------------------
+Total Files: 18
+Total Size: 13.00 GB
+Successful: 18
+Failed: 0
+Missing: 0
+Total Runtime: 3h 7m 20s
+
+------------------------------------------------------------------------
+RESOLUTION
+------------------------------------------------------------------------
+1080p: 5
+720p: 4
+SD: 4
+4K: 3
+1440p: 2
+
+------------------------------------------------------------------------
+VIDEO CODEC
+------------------------------------------------------------------------
+h264: 12
+mpeg4: 3
+msmpeg4v2: 3
+
+------------------------------------------------------------------------
+HDR
+------------------------------------------------------------------------
+UNKNOWN: 15
+SDR: 3
+
+------------------------------------------------------------------------
+BIT DEPTH
+------------------------------------------------------------------------
+8: 18
+
+------------------------------------------------------------------------
+SIZE
+------------------------------------------------------------------------
+<1 GB: 17
+5-10 GB: 1
+
+------------------------------------------------------------------------
+FAILED
+------------------------------------------------------------------------
+None
+
+------------------------------------------------------------------------
+MISSING
+------------------------------------------------------------------------
+None
+
+------------------------------------------------------------------------
+FILES
+------------------------------------------------------------------------
+FILE: bbb_sunflower_1080p_30fps_normal - Copy (2).mp4
+PATH: D:\Test1\MediaDiversity_TestLibrary\bbb_sunflower_1080p_30fps_normal - Copy (2).mp4
+SIZE: 0.26 GB
+DURATION: 10m 34s
+CONTAINER: MP4/MOV
+
+VIDEO
+  [0] h264 | 1920x1080 | 8-bit | UNKNOWN | 30.000 fps
+
+AUDIO
+  [1] mp3 | und | 2 ch | 160 kb/s
+  [2] ac3 | und | 6 ch | 320 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: bbb_sunflower_1080p_30fps_stereo_abl - Copy (2).mp4
+PATH: D:\Test1\MediaDiversity_TestLibrary\bbb_sunflower_1080p_30fps_stereo_abl - Copy (2).mp4
+SIZE: 0.40 GB
+DURATION: 10m 34s
+CONTAINER: MP4/MOV
+
+VIDEO
+  [0] h264 | 1920x2160 | 8-bit | UNKNOWN | 30.000 fps
+
+AUDIO
+  [1] mp3 | und | 2 ch | 160 kb/s
+  [2] ac3 | und | 6 ch | 320 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: bbb_sunflower_1080p_60fps_normal - Copy (2).mp4
+PATH: D:\Test1\MediaDiversity_TestLibrary\bbb_sunflower_1080p_60fps_normal - Copy (2).mp4
+SIZE: 0.33 GB
+DURATION: 10m 34s
+CONTAINER: MP4/MOV
+
+VIDEO
+  [0] h264 | 1920x1080 | 8-bit | UNKNOWN | 60.000 fps
+
+AUDIO
+  [1] mp3 | und | 2 ch | 160 kb/s
+  [2] ac3 | und | 6 ch | 320 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: bbb_sunflower_1080p_60fps_stereo_abl - Copy (2).mp4
+PATH: D:\Test1\MediaDiversity_TestLibrary\bbb_sunflower_1080p_60fps_stereo_abl - Copy (2).mp4
+SIZE: 0.48 GB
+DURATION: 10m 34s
+CONTAINER: MP4/MOV
+
+VIDEO
+  [0] h264 | 1920x2160 | 8-bit | UNKNOWN | 60.000 fps
+
+AUDIO
+  [1] mp3 | und | 2 ch | 160 kb/s
+  [2] ac3 | und | 6 ch | 320 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: bbb_sunflower_2160p_30fps_normal - Copy (2).mp4
+PATH: D:\Test1\MediaDiversity_TestLibrary\bbb_sunflower_2160p_30fps_normal - Copy (2).mp4
+SIZE: 0.59 GB
+DURATION: 10m 34s
+CONTAINER: MP4/MOV
+
+VIDEO
+  [0] h264 | 3840x2160 | 8-bit | UNKNOWN | 30.000 fps
+
+AUDIO
+  [1] mp3 | und | 2 ch | 160 kb/s
+  [2] ac3 | und | 6 ch | 320 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: bbb_sunflower_2160p_60fps_normal - Copy (2).mp4
+PATH: D:\Test1\MediaDiversity_TestLibrary\bbb_sunflower_2160p_60fps_normal - Copy (2).mp4
+SIZE: 0.63 GB
+DURATION: 10m 34s
+CONTAINER: MP4/MOV
+
+VIDEO
+  [0] h264 | 3840x2160 | 8-bit | UNKNOWN | 60.000 fps
+
+AUDIO
+  [1] mp3 | und | 2 ch | 160 kb/s
+  [2] ac3 | und | 6 ch | 320 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: big_buck_bunny_1080p_h264 - Copy (2).mov
+PATH: D:\Test1\MediaDiversity_TestLibrary\big_buck_bunny_1080p_h264 - Copy (2).mov
+SIZE: 0.68 GB
+DURATION: 9m 56s
+CONTAINER: MP4/MOV
+
+VIDEO
+  [0] h264 | 1920x1080 | 8-bit | SDR | 24.000 fps
+
+AUDIO
+  [2] aac | eng | 6 ch | 438 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: big_buck_bunny_1080p_stereo - Copy (2).avi
+PATH: D:\Test1\MediaDiversity_TestLibrary\big_buck_bunny_1080p_stereo - Copy (2).avi
+SIZE: 0.67 GB
+DURATION: 9m 56s
+CONTAINER: AVI
+
+VIDEO
+  [0] msmpeg4v2 | 1920x1080 | 8-bit | UNKNOWN | 24.000 fps
+
+AUDIO
+  [1] mp3 | UNKNOWN | 2 ch | 246 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: big_buck_bunny_1080p_surround - Copy (2).avi
+PATH: D:\Test1\MediaDiversity_TestLibrary\big_buck_bunny_1080p_surround - Copy (2).avi
+SIZE: 0.86 GB
+DURATION: 9m 56s
+CONTAINER: AVI
+
+VIDEO
+  [0] mpeg4 | 1920x1080 | 8-bit | UNKNOWN | 24.000 fps
+
+AUDIO
+  [1] ac3 | UNKNOWN | 6 ch | 448 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: big_buck_bunny_480p_stereo - Copy (2).avi
+PATH: D:\Test1\MediaDiversity_TestLibrary\big_buck_bunny_480p_stereo - Copy (2).avi
+SIZE: 0.15 GB
+DURATION: 9m 56s
+CONTAINER: AVI
+
+VIDEO
+  [0] msmpeg4v2 | 854x480 | 8-bit | UNKNOWN | 24.000 fps
+
+AUDIO
+  [1] mp3 | UNKNOWN | 2 ch | 246 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: big_buck_bunny_480p_surround - Copy (2).avi
+PATH: D:\Test1\MediaDiversity_TestLibrary\big_buck_bunny_480p_surround - Copy (2).avi
+SIZE: 0.21 GB
+DURATION: 9m 56s
+CONTAINER: AVI
+
+VIDEO
+  [0] mpeg4 | 854x480 | 8-bit | UNKNOWN | 24.000 fps
+
+AUDIO
+  [1] ac3 | UNKNOWN | 6 ch | 448 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: big_buck_bunny_720p_h264 - Copy (2).mov
+PATH: D:\Test1\MediaDiversity_TestLibrary\big_buck_bunny_720p_h264 - Copy (2).mov
+SIZE: 0.39 GB
+DURATION: 9m 56s
+CONTAINER: MP4/MOV
+
+VIDEO
+  [0] h264 | 1280x720 | 8-bit | SDR | 24.000 fps
+
+AUDIO
+  [2] aac | eng | 6 ch | 438 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: big_buck_bunny_720p_stereo - Copy (2).avi
+PATH: D:\Test1\MediaDiversity_TestLibrary\big_buck_bunny_720p_stereo - Copy (2).avi
+SIZE: 0.26 GB
+DURATION: 9m 56s
+CONTAINER: AVI
+
+VIDEO
+  [0] msmpeg4v2 | 1280x720 | 8-bit | UNKNOWN | 24.000 fps
+
+AUDIO
+  [1] mp3 | UNKNOWN | 2 ch | 246 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: big_buck_bunny_720p_surround - Copy (2).avi
+PATH: D:\Test1\MediaDiversity_TestLibrary\big_buck_bunny_720p_surround - Copy (2).avi
+SIZE: 0.31 GB
+DURATION: 9m 56s
+CONTAINER: AVI
+
+VIDEO
+  [0] mpeg4 | 1280x720 | 8-bit | UNKNOWN | 24.000 fps
+
+AUDIO
+  [1] ac3 | UNKNOWN | 6 ch | 448 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: BigBuckBunny_320x180 - Copy (2).mp4
+PATH: D:\Test1\MediaDiversity_TestLibrary\BigBuckBunny_320x180 - Copy (2).mp4
+SIZE: 0.06 GB
+DURATION: 9m 56s
+CONTAINER: MP4/MOV
+
+VIDEO
+  [0] h264 | 320x180 | 8-bit | UNKNOWN | 24.000 fps
+
+AUDIO
+  [1] aac | und | 2 ch | 160 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: BigBuckBunny_640x360 - Copy (2).m4v
+PATH: D:\Test1\MediaDiversity_TestLibrary\BigBuckBunny_640x360 - Copy (2).m4v
+SIZE: 0.11 GB
+DURATION: 9m 56s
+CONTAINER: MP4/MOV
+
+VIDEO
+  [1] h264 | 640x359 | 8-bit | SDR | 24.000 fps
+
+AUDIO
+  [0] aac | eng | 2 ch | 128 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: tears_of_steel_720p - Copy (2).mov
+PATH: D:\Test1\MediaDiversity_TestLibrary\tears_of_steel_720p - Copy (2).mov
+SIZE: 0.35 GB
+DURATION: 12m 14s
+CONTAINER: MP4/MOV
+
+VIDEO
+  [0] h264 | 1280x534 | 8-bit | UNKNOWN | 24.000 fps
+
+AUDIO
+  [1] mp3 | eng | 2 ch | 192 kb/s
+
+SUBTITLES
+  None
+
+
+FILE: tearsofsteel_4k - Copy (2).mov
+PATH: D:\Test1\MediaDiversity_TestLibrary\tearsofsteel_4k - Copy (2).mov
+SIZE: 6.27 GB
+DURATION: 12m 14s
+CONTAINER: MP4/MOV
+
+VIDEO
+  [0] h264 | 3840x1714 | 8-bit | UNKNOWN | 24.000 fps
+
+AUDIO
+  [1] aac | eng | 2 ch | 183 kb/s
+
+SUBTITLES
+  None

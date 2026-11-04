@@ -1,0 +1,37 @@
+{
+  "name": "media-tools",
+  "version": "1.0.0",
+  "description": "Official website for Media Cataloger, Media Diversity Sampler, and Media Trickplay Generator.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "test": "node --test scripts/trickplay.test.mjs scripts/media.test.mjs scripts/markdown.test.mjs && node scripts/check-site.mjs",
+    "sync:upstream": "node scripts/sync-upstream.mjs",
+    "check:upstream": "node scripts/sync-upstream.mjs --check",
+    "format": "prettier --write src scripts astro.config.mjs",
+    "format:check": "prettier --check src scripts astro.config.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GlacialPigeon/media-tools.git"
+  },
+  "keywords": ["jellyfin", "trickplay", "media-library", "astro"],
+  "author": "GlacialPigeon",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/GlacialPigeon/media-tools/issues"
+  },
+  "homepage": "https://github.com/GlacialPigeon/media-tools#readme",
+  "dependencies": {
+    "astro": "^7.4.4"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=26.13.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.10",
+    "prettier-plugin-astro": "^1.1.2"
+  }
+}

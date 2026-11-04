@@ -1,0 +1,121 @@
+<div class="guide-platform" hidden>
+  <span class="guide-platform-label" id="platform-label">
+    Show installation steps for
+  </span>
+  <div class="platform-tabs" role="group" aria-labelledby="platform-label">
+    <button type="button" data-platform-choice="windows" aria-pressed="false">
+      Windows
+    </button>
+    <button type="button" data-platform-choice="linux" aria-pressed="false">
+      Linux
+    </button>
+  </div>
+</div>
+<p class="copy-status sr-only" role="status"></p>
+<script>
+  const control = document.querySelector<HTMLElement>(".guide-platform");
+  if (control) control.hidden = false;
+  const choices = [
+    ...document.querySelectorAll<HTMLButtonElement>("[data-platform-choice]"),
+  ];
+  const platforms = ["windows", "linux"];
+  // A saved choice wins; otherwise guess from the browser, Windows by default.
+  function initialPlatform() {
+    try {
+      const saved = localStorage.getItem("media-tools-platform");
+      if (saved && platforms.includes(saved)) return saved;
+    } catch {}
+    const agent = navigator.userAgent;
+    return /linux|x11/i.test(agent) && !/android/i.test(agent)
+      ? "linux"
+      : "windows";
+  }
+  function choose(platform: string, remember: boolean) {
+    document
+      .querySelectorAll<HTMLElement>("[data-platform]")
+      .forEach((p) => (p.hidden = p.dataset.platform !== platform));
+    choices.forEach((button) =>
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.platformChoice === platform),
+      ),
+    );
+    if (!remember) return;
+    try {
+      localStorage.setItem("media-tools-platform", platform);
+    } catch {}
+  }
+  choices.forEach((button) =>
+    button.addEventListener("click", () =>
+      choose(button.dataset.platformChoice!, true),
+    ),
+  );
+  if (choices.length) choose(initialPlatform(), false);
+  // A code block that scrolls sideways must be reachable from the keyboard.
+  const scrollObserver = new ResizeObserver((entries) =>
+    entries.forEach(({ target }) => {
+      if (target.scrollWidth > target.clientWidth)
+        target.setAttribute("tabindex", "0");
+      else target.removeAttribute("tabindex");
+    }),
+  );
+  document
+    .querySelectorAll("pre")
+    .forEach((pre) => scrollObserver.observe(pre));
+  // Only commands that are meant to be run get a copy button; listings,
+  // menus, file trees and report excerpts do not.
+  const status = document.querySelector<HTMLElement>(".copy-status");
+  // Clearing first makes a screen reader announce a repeated message again.
+  const announce = (message: string) => {
+    if (!status) return;
+    status.textContent = "";
+    setTimeout(() => (status.textContent = message), 50);
+  };
+  async function copyText(code: HTMLElement) {
+    const text = code.textContent || "";
+    if (navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return;
+      } catch {
+        // fall through to the selection method (insecure page, no permission)
+      }
+    }
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(code);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
+    const copied = document.execCommand("copy");
+    selection?.removeAllRanges();
+    if (!copied) throw new Error("Copy unavailable");
+  }
+  document.querySelectorAll("pre[data-copy]").forEach((pre) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "copy-button";
+    button.textContent = "Copy";
+    button.setAttribute("aria-label", "Copy code block");
+    let reset: ReturnType<typeof setTimeout> | undefined;
+    button.addEventListener("click", async () => {
+      clearTimeout(reset);
+      const code = pre.querySelector("code");
+      try {
+        if (!code) throw new Error("Code missing");
+        await copyText(code);
+        button.textContent = "Copied";
+        announce("Code copied to clipboard.");
+      } catch {
+        button.textContent = "Select and copy";
+        announce(
+          "Clipboard unavailable. Select the code and copy it manually.",
+        );
+      }
+      reset = setTimeout(() => (button.textContent = "Copy"), 2500);
+    });
+    const wrapper = document.createElement("div");
+    wrapper.className = "code-block";
+    pre.replaceWith(wrapper);
+    wrapper.append(pre, button);
+  });
+</script>

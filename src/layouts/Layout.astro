@@ -1,0 +1,182 @@
+---
+import "../styles/global.css";
+import { findAsset } from "../lib/media.mjs";
+// Social networks do not reliably show WebP, so the sharing image is PNG or JPEG.
+const social = findAsset("media-tools-social", ["png", "jpg", "svg"]);
+const {
+  title = "Media Tools — Your library. Your hardware. Your rules.",
+  description = "Three independent, local media tools. Generate Jellyfin trickplay, catalog your library and select diverse test videos.",
+} = Astro.props;
+const base = import.meta.env.BASE_URL;
+const path = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#101116" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Media Tools" />
+    <meta property="og:url" content={new URL(path, Astro.site)} />
+    <meta
+      property="og:image"
+      content={new URL(`${base}media/${social.file}`, Astro.site)}
+    />
+    <meta property="og:image:width" content={String(social.width)} />
+    <meta property="og:image:height" content={String(social.height)} />
+    <meta property="og:image:alt" content="Media Tools" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href={new URL(path, Astro.site)} />
+    <link rel="sitemap" href={`${base}sitemap.xml`} />
+    <link rel="icon" type="image/svg+xml" href={`${base}favicon.svg`} />
+    <title>{title}</title>
+  </head>
+  <body>
+    <a class="skip" href="#main">
+      Skip to content
+    </a>
+    <header class="site-header" id="site-header">
+      <nav class="wrap nav" aria-label="Main navigation">
+        <a class="brand" href={base} aria-label="Media Tools, home">
+          <span class="brand-mark" aria-hidden="true">
+            m<span>t</span>
+          </span>
+          <span class="brand-name" aria-hidden="true">
+            Media Tools<span class="brand-dot">.</span>
+          </span>
+        </a>
+        <div class="navlinks">
+          <a href={`${base}#tools`}>Tools</a>
+          <a href={`${base}#story`}>Our story</a>
+          <a href={`${base}#faq`}>FAQ</a>
+        </div>
+      </nav>
+    </header>
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="wrap site-footer">
+      <div class="footer-identity">
+        <a class="brand" href={base}>
+          Media Tools<span class="brand-dot">.</span>
+        </a>
+        <p>Built for the libraries we keep.</p>
+      </div>
+      <nav class="footer-links" aria-label="Footer navigation">
+        <a href={`${base}#tools`}>Tools</a>
+        <a href={`${base}privacy/`}>Privacy</a>
+        <a href={`${base}#faq`}>FAQ</a>
+      </nav>
+      <small class="footer-notice">
+        Independent open-source projects by GlacialPigeon. Not affiliated with
+        Jellyfin.
+      </small>
+    </footer>
+    <script>
+      const header = document.querySelector<HTMLElement>(".site-header");
+      if (header) {
+        const measureHeader = () =>
+          document.documentElement.style.setProperty(
+            "--header-height",
+            `${header.getBoundingClientRect().height}px`,
+          );
+        const updateHeader = () => {
+          if (window.scrollY > 96) header.classList.add("is-compact");
+          else if (window.scrollY < 16) header.classList.remove("is-compact");
+          measureHeader();
+        };
+        updateHeader();
+        window.addEventListener("scroll", updateHeader, { passive: true });
+        new ResizeObserver(measureHeader).observe(header);
+
+        function alignAnchor(animate = true) {
+          requestAnimationFrame(() => {
+            let target: HTMLElement | null = null;
+            try {
+              target = document.getElementById(
+                decodeURIComponent(location.hash.slice(1)),
+              );
+            } catch {}
+            if (!target) return;
+            // Settle the header size before calculating the destination.
+            // Product panels are already revealed by their hashchange listener.
+            header!.classList.toggle(
+              "is-compact",
+              target.id !== "main" &&
+                window.scrollY + target.getBoundingClientRect().top > 96,
+            );
+            measureHeader();
+            const local = target.closest("[data-product-panel]")
+              ? document.querySelector<HTMLElement>(".product-navigation")
+              : null;
+            const gap = target.matches("h2, h3, h4") ? 16 : 0;
+            const top =
+              window.scrollY +
+              target.getBoundingClientRect().top -
+              header!.getBoundingClientRect().height -
+              (local?.getBoundingClientRect().height || 0) -
+              gap;
+            window.scrollTo({
+              top: Math.max(0, top),
+              behavior:
+                animate &&
+                !window.matchMedia("(prefers-reduced-motion: reduce)").matches
+                  ? "smooth"
+                  : "instant",
+            });
+            target.setAttribute("tabindex", "-1");
+            target.focus({ preventScroll: true });
+          });
+        }
+        document.addEventListener("click", (event) => {
+          if (
+            !(event instanceof MouseEvent) ||
+            event.button !== 0 ||
+            event.metaKey ||
+            event.ctrlKey ||
+            event.shiftKey ||
+            event.altKey
+          )
+            return;
+          const link = (event.target as Element).closest<HTMLAnchorElement>(
+            "a[href]",
+          );
+          if (!link || link.target || link.hasAttribute("download")) return;
+          const url = new URL(link.href);
+          if (
+            url.origin !== location.origin ||
+            url.pathname !== location.pathname ||
+            url.search !== location.search ||
+            !url.hash
+          )
+            return;
+          let target: HTMLElement | null = null;
+          try {
+            target = document.getElementById(
+              decodeURIComponent(url.hash.slice(1)),
+            );
+          } catch {}
+          if (!target) return;
+          event.preventDefault();
+          if (location.hash !== url.hash) {
+            history.pushState(null, "", url.hash);
+            window.dispatchEvent(new HashChangeEvent("hashchange"));
+          } else alignAnchor();
+        });
+        window.addEventListener("hashchange", () => alignAnchor());
+        if (location.hash) {
+          if (document.readyState === "complete") alignAnchor(false);
+          else
+            window.addEventListener("load", () => alignAnchor(false), {
+              once: true,
+            });
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 # Media Tools
 
-The website for three independent Python terminal tools: **Media Trickplay Generator**, **Media Cataloger** and **Media Diversity Sampler**. It is a static [Astro](https://astro.build/) site, live at <https://glacialpigeon.github.io/media-tools/>. 
+The website for three independent Python terminal tools: **Media Trickplay Generator**, **Media Cataloger** and **Media Diversity Sampler**, live at <https://glacialpigeon.github.io/media-tools/>. 
 
 The tools themselves live in their own repositories: [MediaTrickplayGenerator](https://github.com/GlacialPigeon/MediaTrickplayGenerator), [MediaCataloger](https://github.com/GlacialPigeon/MediaCataloger) and [MediaDiversitySampler](https://github.com/GlacialPigeon/MediaDiversitySampler).
 
